@@ -1,0 +1,368 @@
+swagger: '2.0'
+info:
+  title: User profile management REST API
+  description: API to manage user profiles
+  version: 1.0.0
+basePath: /api/v1
+schemes:
+  - https
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /token/:
+    post:
+      tags:
+        - JWT token
+      summary: Retrieve token for authorized user
+      parameters:
+        - name: loginUser
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/LoginUser'
+          description: an authorization header
+      operationId: getToken
+      description: 'Retrieve token for authorized user'
+      responses:
+        200:
+          description: Successfully retrieved token
+          x-amf-mediaType: application/json
+          schema:
+            items:
+              $ref: '#/definitions/AuthToken'
+        400:
+          description: You are not authorized to get the JWT token
+  /admin/users/:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve all list of users for Admin only
+      operationId: getUsers
+      description: Get all list of users for Admin only
+      parameters:
+        - name: Authorization
+          required: true
+          in: header
+          type: string
+          description: an authorization header
+      responses:
+        200:
+          description: Successfully retrieved list of users for Admin
+          x-amf-mediaType: application/
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: You are not authorized to view the users
+        403:
+          description: Accessing the users you are trying to reach is forbidden
+    post:
+      tags:
+        - Admin
+      summary: Create user authorized to Admin only
+      operationId: createUser
+      description: Create user
+      parameters:
+        - name: CreateUser
+          in: body
+          schema:
+            $ref: '#/definitions/User'
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+      responses:
+        200:
+          description: OK
+          x-amf-mediaType: application/
+          schema:
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Accessing the user you are trying to reach is forbidden
+        404:
+          description: The user is not found
+  /admin/users/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve user information for given user id
+      operationId: getUserForId
+      description: Get user information
+      parameters:
+        - name: id
+          type: number
+          description: User id
+          required: true
+          in: path
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+      responses:
+        200:
+          description: OK
+          x-amf-mediaType: application/
+          schema:
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Accessing the user you are trying to reach is forbidden
+        404:
+          description: The user is not found
+    put:
+      tags:
+        - Admin
+      summary: Retrieve user information for given user id
+      operationId: updateUserForId
+      description: update user
+      parameters:
+        - name: id
+          type: number
+          description: User id
+          required: true
+          in: path
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+        - name: user
+          in: body
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+          x-amf-mediaType: application/
+          schema:
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Accessing the user you are trying to reach is forbidden
+        404:
+          description: The user is not found
+    patch:
+      tags:
+        - Admin
+      summary: Update user role authorized to Admin only
+      operationId: updateUserRoleId
+      description: update user role
+      parameters:
+        - name: id
+          type: number
+          description: User id
+          required: true
+          in: path
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+        - name: updateUser
+          in: body
+          schema:
+            $ref: '#/definitions/UpdateUser'
+      responses:
+        200:
+          description: OK
+          x-amf-mediaType: application/
+          schema:
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Accessing the user you are trying to reach is forbidden
+        404:
+          description: The user is not found
+    delete:
+      tags:
+        - Admin
+      summary: Delete user authorized to Admin only
+      operationId: deleteUser
+      description: Delete user for given id
+      parameters:
+        - name: id
+          type: number
+          description: User id
+          required: true
+          in: path
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+      responses:
+        200:
+          description: OK
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Accessing the user you are trying to reach is forbidden
+        404:
+          description: The user is not found
+  /users/:
+    get:
+      tags:
+        - Admin and User
+      summary: Retrieve current logged in user information
+      operationId: getCurrentUser
+      description: Get current logged in user information
+      parameters:
+        - name: Authorization
+          required: true
+          in: header
+          type: string
+          description: an authorization header
+      responses:
+        200:
+          description: Successfully retrieved list of users for Admin
+          x-amf-mediaType: application/
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserInfo'
+        401:
+          description: You are not authorized to view
+  /users/{id}:
+    delete:
+      tags:
+        - Admin and User
+      summary: Delete current logged in user
+      operationId: deleteCurrentUser
+      description: Delete current logged in user
+      parameters:
+        - name: id
+          type: number
+          description: User id
+          required: true
+          in: path
+        - name: Authorization
+          type: string
+          required: true
+          in: header
+          description: an authorization header
+      responses:
+        200:
+          description: OK
+        401:
+          description: You are not authorized to view the user
+        403:
+          description: Deleting other than current user is not allowed
+definitions:
+  AuthToken:
+    type: object
+    properties:
+      token:
+        type: string
+        description: JWT token
+  LoginUser:
+    type: object
+    properties:
+      username:
+        type: string
+        description: Username
+      password:
+        type: string
+        description: password
+  UpdateUser:
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/Role'
+        description: User roles
+  UserInfo:
+    type: object
+    properties:
+      username:
+        type: string
+        description: Username
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/Role'
+        description: User roles
+  User:
+    type: object
+    properties:
+      id:
+        type: number
+        description: id
+      username:
+        type: string
+        description: Username
+      password:
+        type: string
+        description: password
+      firstName:
+        type: string
+        description: User first name
+      lastName:
+        type: string
+        description: User last name
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/Role'
+        description: User roles
+      addresses:
+        type: array
+        items:
+          $ref: '#/definitions/Address'
+        description: User address
+  Role:
+    type: object
+    properties:
+      id:
+        type: number
+        description: id
+      roleType:
+        type: string
+        description: User role type
+      description:
+        type: string
+        description: description
+  Address:
+    type: object
+    properties:
+      id:
+        type: number
+        description: id
+      type:
+        type: string
+        description: Address type
+      line1:
+        type: string
+        description: Address line1
+      line2:
+        type: string
+        description: Address line2
+      city:
+        type: string
+        description: City
+      state:
+        type: string
+        description: State
+      zipcode:
+        type: string
+        description: Zipcode
+      email:
+        type: string
+        description: User email
