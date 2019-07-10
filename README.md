@@ -24,6 +24,9 @@ This is a demo of User profile management using JSON Web Token (JWT) with Spring
 </li>
 <li><h5>Run the app using maven</h5>
     mvn spring-boot:run
+</li>    
+<li><h5>Swagger File location</h5>
+    src\main\resources
 </li>
 </ol>
 
